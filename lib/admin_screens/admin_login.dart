@@ -15,7 +15,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   Future<void> _login() async {
     final res = await login(emailCtrl.text, passCtrl.text);
-    if (res['user']?['role'] == 'ADMIN') {
+    if (res == "ADMIN") {
       if (!mounted) return;
       context.go('/admin');
     } else {

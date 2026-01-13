@@ -63,7 +63,7 @@ class UserDashboardScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  ResultsScreen(electionId: election["id"]!),
+                                  ResultScreen(electionId: "123"),
                             ),
                           );
                         },

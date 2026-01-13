@@ -15,7 +15,7 @@ class AdminDashboardScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePositionScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePositionsScreen())),
             child: const Text("Manage Positions"),
           ),
           ElevatedButton(
@@ -23,11 +23,11 @@ class AdminDashboardScreen extends StatelessWidget {
             child: const Text("Add Candidate"),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ElectionControlScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ElectionControlScreen(electionId: 'id'))),
             child: const Text("Election Control"),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ResultsScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ResultsScreen(electionId: "123"))),
             child: const Text("Results Analytics"),
           ),
         ],

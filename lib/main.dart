@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'router.dart';
 
+
 void main() {
   runApp(const EvoteApp());
 }
@@ -12,7 +13,7 @@ class EvoteApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Evote',
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: router,
     );
   }

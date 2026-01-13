@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../api.dart';
 
 class FinalResultsScreen extends StatefulWidget {
   final String electionId;
@@ -10,92 +9,58 @@ class FinalResultsScreen extends StatefulWidget {
 }
 
 class _FinalResultsScreenState extends State<FinalResultsScreen> {
-  Map<String, dynamic>? results;
-  bool loading = true;
+  bool publishing = false;
+  bool published = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadResults();
-  }
+  /// ✅ Define the adminPublish method
+  Future<void> adminPublish(String electionId) async {
+    setState(() => publishing = true);
 
-  Future<void> _loadResults() async {
     try {
-      final data = await getFinalResults(widget.electionId);
+      // Simulate backend call with delay
+      await Future.delayed(const Duration(seconds: 2));
+
+      // TODO: Replace with real API call:
+      // final response = await http.post(
+      //   Uri.parse("https://yourapi.com/elections/$electionId/publish"),
+      // );
+
       setState(() {
-        results = data;
-        loading = false;
+        publishing = false;
+        published = true;
       });
-    } catch (e) {
-      setState(() => loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to load results: $e")),
-      );
-    }
-  }
 
-  Future<void> _publishResults() async {
-    try {
-      await adminPublish(widget.electionId);
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Results Published Successfully")),
+        const SnackBar(content: Text("Results published successfully!")),
       );
-      // reload results to reflect published state
-      _loadResults();
     } catch (e) {
-      if (!mounted) return;
+      setState(() => publishing = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Publish failed: $e")),
+        SnackBar(content: Text("Failed to publish results: $e")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-    if (results == null || results!['message'] == 'Results not available') {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Final Results")),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: _publishResults,
-            child: const Text("Publish Results"),
-          ),
-        ),
-      );
-    }
-
-    final positions = List<Map<String, dynamic>>.from(results!['positions']);
     return Scaffold(
       appBar: AppBar(title: const Text("Final Results")),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ...positions.map((p) {
-            final candidates = List<Map<String, dynamic>>.from(p['candidates']);
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(p['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    ...candidates.map((c) => Text("${c['name']}: ${c['votesPercent']}%")),
-                  ],
-                ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (publishing)
+              const CircularProgressIndicator()
+            else if (published)
+              const Text("Results have been published!",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+            else
+              ElevatedButton(
+                onPressed: () => adminPublish(widget.electionId),
+                child: const Text("Publish Results"),
               ),
-            );
-          }),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _publishResults,
-            child: const Text("Publish Results"),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

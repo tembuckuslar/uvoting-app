@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ResultsAnalyticsScreen extends StatelessWidget {
-  const ResultsAnalyticsScreen({super.key});
+class ResultsScreen extends StatelessWidget {
+  const ResultsScreen({super.key, required String electionId});
 
   @override
   Widget build(BuildContext context) {

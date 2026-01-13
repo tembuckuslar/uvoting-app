@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uvoting_app/screens/dashboard_screen.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:uvoting_app/screens/sign_up_screen.dart';
 
 
 // USER SCREENS (ensure these exist)
@@ -17,7 +18,7 @@ import 'screens/already_vote_screen.dart';
 import 'screens/result_screen.dart';
 
 // ADMIN SCREENS (ensure these exist)
-import 'admin_screens/admin login.dart';
+import 'admin_screens/admin_login.dart';
 import 'admin_screens/admin_dashboard.dart';
 import 'admin_screens/manage_position_screen.dart';
 import 'admin_screens/add_candidate_screen.dart';
@@ -67,15 +68,41 @@ final router = GoRouter(
 
     // ADMIN
     GoRoute(path: '/admin/login', builder: (ctx, st) => const AdminLoginScreen()),
-    GoRoute(path: '/admin', builder: (ctx, st) => const AdminDashboardScreen()),
-    GoRoute(path: '/admin/positions', builder: (ctx, st) => const ManagePositionsScreen()),
-    GoRoute(path: '/admin/add-candidate', builder: (ctx, st) => const AddCandidateScreen()),
-    GoRoute(path: '/admin/control', builder: (ctx, st) => const ElectionControlScreen()),
-    GoRoute(path: '/admin/analytics', builder: (ctx, st) => const ResultsAnalyticsScreen()),
+    GoRoute(path: '/admin/dashboard', builder: (ctx, st) => const AdminDashboardScreen()),
+      GoRoute(
+      path: '/admin/position',
+      builder: (context, state) => const ManagePositionsScreen()),
+
+    GoRoute(
+      path: '/admin/add-candidate',
+      builder: (context, state) => const AddCandidateScreen()),
+
+    GoRoute(
+      path: '/admin/control/:id',
+      builder: (context, state) {
+        final electionId = state.pathParameters['id']!;
+        return ElectionControlScreen(electionId: electionId);
+      },
+    ),
+
+    GoRoute(
+      path: '/admin/result/:id',
+      builder: (context, state) {
+        final electionId = state.pathParameters['id']!;
+        return ResultScreen(electionId: electionId);
+      },
+    ),
+    GoRoute(
+      path: '/voter/signup',
+      builder: (ctx, st) => const SignUpScreen(),
+    ),
+
     GoRoute(
       path: '/admin/final-results/:id',
       builder: (ctx, st) => FinalResultsScreen(electionId: st.pathParameters['id']!),
     ),
   ],
 );
+
+
 
