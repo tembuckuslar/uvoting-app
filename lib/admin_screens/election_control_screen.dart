@@ -9,95 +9,95 @@ class ElectionControlScreen extends StatefulWidget {
 }
 
 class _ElectionControlScreenState extends State<ElectionControlScreen> {
-  bool starting = false;
-  bool ending = false;
-  bool publishing = false;
+  // Example positions
+  final List<Map<String, dynamic>> positions = [
+    {"id": "1", "title": "Student President", "status": "PENDING"},
+    {"id": "2", "title": "Sports Coordinator", "status": "ACTIVE"},
+    {"id": "3", "title": "Treasurer", "status": "ENDED"},
+  ];
 
-  /// ✅ Start the election
-  Future<void> adminStart(String electionId) async {
-    setState(() => starting = true);
-    try {
-      await Future.delayed(const Duration(seconds: 2)); // simulate backend call
-      setState(() => starting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Election started successfully!")),
-      );
-    } catch (e) {
-      setState(() => starting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to start election: $e")),
-      );
-    }
+  /// ✅ Start election for a position
+  Future<void> adminStart(String positionId) async {
+    setState(() {
+      positions.firstWhere((p) => p["id"] == positionId)["status"] = "STARTING";
+    });
+    await Future.delayed(const Duration(seconds: 2)); // simulate backend call
+    setState(() {
+      positions.firstWhere((p) => p["id"] == positionId)["status"] = "ACTIVE";
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Election for $positionId started successfully!")),
+    );
   }
 
-  /// ✅ End the election
-  Future<void> adminEnd(String electionId) async {
-    setState(() => ending = true);
-    try {
-      await Future.delayed(const Duration(seconds: 2)); // simulate backend call
-      setState(() => ending = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Election ended successfully!")),
-      );
-    } catch (e) {
-      setState(() => ending = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to end election: $e")),
-      );
-    }
-  }
-
-  /// ✅ Publish the results
-  Future<void> adminPublish(String electionId) async {
-    setState(() => publishing = true);
-    try {
-      await Future.delayed(const Duration(seconds: 2)); // simulate backend call
-      setState(() => publishing = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Results published successfully!")),
-      );
-    } catch (e) {
-      setState(() => publishing = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to publish results: $e")),
-      );
-    }
+  /// ✅ End election for a position
+  Future<void> adminEnd(String positionId) async {
+    setState(() {
+      positions.firstWhere((p) => p["id"] == positionId)["status"] = "ENDING";
+    });
+    await Future.delayed(const Duration(seconds: 2)); // simulate backend call
+    setState(() {
+      positions.firstWhere((p) => p["id"] == positionId)["status"] = "ENDED";
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Election for $positionId ended successfully!")),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Election Control")),
-      body: Padding(
+      body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: starting ? null : () => adminStart(widget.electionId),
-              child: starting
-                  ? const CircularProgressIndicator()
-                  : const Text("Start Election"),
+        itemCount: positions.length,
+        itemBuilder: (context, index) {
+          final position = positions[index];
+          final status = position["status"];
+
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(position["title"],
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text("Status: $status"),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, // ✅ Start button green
+                        ),
+                        onPressed: status == "PENDING"
+                            ? () => adminStart(position["id"])
+                            : null,
+                        child: const Text("Start"),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red, // ✅ End button red
+                        ),
+                        onPressed: status == "ACTIVE"
+                            ? () => adminEnd(position["id"])
+                            : null,
+                        child: const Text("End"),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: ending ? null : () => adminEnd(widget.electionId),
-              child: ending
-                  ? const CircularProgressIndicator()
-                  : const Text("End Election"),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed:
-              publishing ? null : () => adminPublish(widget.electionId),
-              child: publishing
-                  ? const CircularProgressIndicator()
-                  : const Text("Publish Results"),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
-
