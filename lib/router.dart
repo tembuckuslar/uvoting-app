@@ -27,7 +27,7 @@ import 'admin_screens/results _screen.dart';
 import 'admin_screens/final_results_screen.dart';
 
 final router = GoRouter(
-  initialLocation: '/welcome',
+  initialLocation: '/admin/dashboard',
   routes: [
     GoRoute(
       path: '/dashboard',
